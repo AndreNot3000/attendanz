@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "86873546841",
+    "project_id": "attendanz-app",
+    "storage_bucket": "attendanz-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:86873546841:android:4e07eeafc69ebf6a87d148",
+        "android_client_info": {
+          "package_name": "com.example.attendance_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJWGB7CQ3wU4ukGk__q9S7CjO2mDacugA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

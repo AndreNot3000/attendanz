@@ -1,0 +1,38 @@
+name: attendance_app
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  get: ^4.7.2
+  intl: ^0.20.2
+  qr_code_scanner: ^1.0.1
+  uuid: ^4.5.1
+  firebase_core: ^3.9.0
+  cloud_firestore: ^5.5.0
+  firebase_auth: ^5.3.1
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^5.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^4.0.0
+
+# 👇 Add this section at the bottom
+dependency_overrides:
+  qr_code_scanner:
+    git:
+      url: https://github.com/juliuscanute/qr_code_scanner.git
+
+flutter:
+  uses-material-design: true
