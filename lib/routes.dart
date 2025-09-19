@@ -1,3 +1,4 @@
+import 'package:attendance_app/pages/admin_dashboard.dart';
 import 'package:attendance_app/pages/attendance_list.dart';
 import 'package:attendance_app/pages/home.dart';
 import 'package:attendance_app/pages/qr_generator.dart';
@@ -17,6 +18,8 @@ class Routes {
   static const scan = '/scan';
   static const list = '/attendance_list';
   static const qrGen = '/qr-generator';
+  static const adminDashboard = '/adminDashboard';
+
 
 
 
@@ -28,6 +31,7 @@ class Routes {
     GetPage(name: scan, page: () => ScanQRPage(action: Get.arguments as String,)),
     GetPage(name: list, page: () => const AttendanceHistoryScreen()),
     GetPage(name: qrGen, page: () => const QRGeneratorPage()),
+    GetPage(name: adminDashboard, page: () => const AdminDashboardPage()),
 
   ];
 }

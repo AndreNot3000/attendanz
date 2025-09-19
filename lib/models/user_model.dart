@@ -4,39 +4,43 @@ class AppUser {
   final String uid;
   final String email;
   final String fullName;
+  final String role; // ✅ Added
 
   AppUser({
     required this.uid,
     required this.email,
     required this.fullName,
+    required this.role,
   });
 
-  // Convert Firestore map → AppUser
+  // Firestore map → AppUser
   factory AppUser.fromMap(Map<String, dynamic> map, {required String uid}) {
     return AppUser(
       uid: uid,
       email: map['email']?.toString() ?? '',
       fullName: map['fullName']?.toString() ?? '',
+      role: map['role']?.toString() ?? 'employee', // default employee
     );
   }
 
-  // Convert Firestore document → AppUser
-  factory AppUser.fromFirestore(
-      DocumentSnapshot<Map<String, dynamic>> doc) {
+  // Firestore document → AppUser
+  factory AppUser.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data();
     return AppUser(
       uid: doc.id,
       email: data?['email'] ?? '',
       fullName: data?['fullName'] ?? '',
+      role: data?['role'] ?? 'employee',
     );
   }
 
-  // Convert AppUser → Map
+  // AppUser → Firestore map
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
       'email': email,
       'fullName': fullName,
+      'role': role,
     };
   }
 }

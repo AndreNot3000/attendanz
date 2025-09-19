@@ -17,17 +17,21 @@ class AuthController extends GetxController {
     ever(firebaseUser, _setInitialScreen);
   }
 
-  /// Decides initial screen based on auth state
+  /// Initial screen logic
   void _setInitialScreen(User? user) async {
     if (user == null) {
       Future.microtask(() => Get.offAllNamed('/signin'));
     } else {
       final doc = await _db.collection('users').doc(user.uid).get();
       if (doc.exists) {
-        profile.value = AppUser.fromFirestore(
-          doc,
-        );
-        Future.microtask(() => Get.offAllNamed('/home'));
+        profile.value =
+            AppUser.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>);
+
+        if (profile.value!.role == "admin") {
+          Future.microtask(() => Get.offAllNamed('/adminDashboard'));
+        } else {
+          Future.microtask(() => Get.offAllNamed('/home'));
+        }
       } else {
         await _auth.signOut();
         Future.microtask(() => Get.offAllNamed('/signin'));
@@ -36,11 +40,11 @@ class AuthController extends GetxController {
   }
 
   void checkAuth() {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = _auth.currentUser;
     _setInitialScreen(user);
   }
 
-  /// 🔹 Sign Up and Save Profile
+  /// 🔹 Sign Up (always employee)
   Future<void> signUp(String email, String password, String fullName) async {
     try {
       final cred = await _auth.createUserWithEmailAndPassword(
@@ -53,13 +57,12 @@ class AuthController extends GetxController {
         uid: user.uid,
         email: email,
         fullName: fullName,
+        role: "employee", // ✅ always employee
       );
 
-      // Save user profile in Firestore
       await _db.collection('users').doc(user.uid).set(appUser.toMap());
       profile.value = appUser;
 
-      // Sign out after signup
       await _auth.signOut();
 
       Get.offAllNamed('/signin');
@@ -69,7 +72,7 @@ class AuthController extends GetxController {
     }
   }
 
-  /// 🔹 Sign In and Load Profile
+  /// 🔹 Sign In
   Future<void> signIn(String email, String password) async {
     try {
       final cred = await _auth.signInWithEmailAndPassword(
@@ -80,19 +83,19 @@ class AuthController extends GetxController {
       final user = cred.user!;
       final doc = await _db.collection('users').doc(user.uid).get();
 
-      if (!doc.exists) {
-        // Create profile if missing
-        final appUser = AppUser(
-          uid: user.uid,
-          email: user.email ?? email,
-          fullName: user.displayName ?? 'Unknown User',
-        );
-        await _db.collection('users').doc(user.uid).set(appUser.toMap());
-        profile.value = appUser;
-      } else {
+      if (doc.exists) {
         profile.value = AppUser.fromFirestore(
-          doc as DocumentSnapshot<Map<String, dynamic>>,
+          doc,
         );
+
+        if (profile.value!.role == "admin") {
+          Get.offAllNamed('/adminDashboard');
+        } else {
+          Get.offAllNamed('/home');
+        }
+      } else {
+        await _auth.signOut();
+        Get.snackbar("Error", "No profile found. Contact Admin.");
       }
     } catch (e) {
       Get.snackbar("Sign In Error", e.toString());

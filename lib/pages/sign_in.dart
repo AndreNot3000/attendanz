@@ -3,14 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
 
-class SignInPage extends StatelessWidget {
+class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
+
+  @override
+  State<SignInPage> createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
   final AuthController _auth = Get.find();
   final _email = TextEditingController();
   final _pass = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
 
-  SignInPage({super.key});
+  bool _obscurePassword = true; // 👈 state for show/hide password
 
   @override
   Widget build(BuildContext context) {
@@ -47,13 +53,23 @@ class SignInPage extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                // Password field
+                // Password field with eye icon
                 TextFormField(
                   controller: _pass,
-                  obscureText: true,
+                  obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     prefixIcon: const Icon(Icons.lock),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -114,7 +130,7 @@ class SignInPage extends StatelessWidget {
                     const Text("Don’t have an account?"),
                     TextButton(
                       onPressed: () {
-                        Get.to(() => SignUpPage());
+                        Get.to(() => const SignUpPage());
                       },
                       child: const Text(
                         "Sign up",
