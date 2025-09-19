@@ -38,9 +38,12 @@ class AttendanceController extends GetxController {
       final lastAction = snapshot.docs.first['action'] as String;
 
       if (lastAction == actionType) {
-        return "duplicate"; // special flag for duplicate actions
+        if (actionType == "Clock In") {
+          throw Exception("Cannot clock in. Please clock out before clocking in again.");
+        } else if (actionType == "Clock Out") {
+          throw Exception("Cannot clock out. Please clock in before clocking out again.");
+        }
       }
-
     }
 
     // Save record

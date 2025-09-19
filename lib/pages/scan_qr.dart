@@ -29,13 +29,13 @@ class _ScanQRPageState extends State<ScanQRPage> {
         final actionType =
         await attendanceController.recordScan(code, widget.action);
 
-        // ✅ Success → Navigate to SuccessScreen
+        // ✅ Only navigate if success (not duplicate)
         Get.to(() => SuccessScreen(action: actionType));
       } catch (e) {
-        // ✅ Error → Show snackbar
+        // ✅ Show nice error snackbar
         Get.snackbar(
           "Action Not Allowed",
-          e.toString().replaceFirst("Exception: ", ""), // clean up text
+          e.toString().replaceFirst("Exception: ", ""), // clean message
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red.shade600,
           colorText: Colors.white,
