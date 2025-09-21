@@ -87,38 +87,50 @@ class _SignInPageState extends State<SignInPage> {
                 // Sign In Button
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1976D2),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
+                  child: Obx(() {
+                    return ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1976D2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
                       ),
-                    ),
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        try {
-                          await _auth.signIn(
-                            _email.text.trim(),
-                            _pass.text.trim(),
-                          );
-                          // 👇 optional direct navigation
-                          // Get.offAllNamed('/home');
-                        } catch (e) {
-                          Get.snackbar(
-                            "Sign In Failed",
-                            e.toString().replaceAll("Exception:", "").trim(),
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: Colors.redAccent,
-                            colorText: Colors.white,
-                          );
+                      onPressed: _auth.isLoading.value
+                          ? null // disable button while loading
+                          : () async {
+                        if (_formKey.currentState!.validate()) {
+                          try {
+                            await _auth.signIn(
+                              _email.text.trim(),
+                              _pass.text.trim(),
+                            );
+                            // Get.offAllNamed('/home');
+                          } catch (e) {
+                            Get.snackbar(
+                              "Sign In Failed",
+                              e.toString().replaceAll("Exception:", "").trim(),
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.redAccent,
+                              colorText: Colors.white,
+                            );
+                          }
                         }
-                      }
-                    },
-                    child: const Text(
-                      "Sign In",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                    ),
-                  ),
+                      },
+                      child: _auth.isLoading.value
+                          ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                          : const Text(
+                        "Sign In",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    );
+                  }),
                 ),
 
                 const SizedBox(height: 12),

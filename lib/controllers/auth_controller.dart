@@ -9,6 +9,8 @@ class AuthController extends GetxController {
 
   Rxn<User> firebaseUser = Rxn<User>();
   Rxn<AppUser> profile = Rxn<AppUser>();
+  var isLoading = false.obs;
+
 
   @override
   void onInit() {
@@ -47,6 +49,8 @@ class AuthController extends GetxController {
   /// 🔹 Sign Up (always employee)
   Future<void> signUp(String email, String password, String fullName) async {
     try {
+      isLoading.value = true; // ✅ start loader
+
       final cred = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
@@ -69,12 +73,16 @@ class AuthController extends GetxController {
       Get.snackbar("Success", "Account created! Please sign in.");
     } catch (e) {
       Get.snackbar("Signup Error", e.toString());
+    } finally {
+      isLoading.value = false; // ✅ stop loader
     }
   }
 
   /// 🔹 Sign In
   Future<void> signIn(String email, String password) async {
     try {
+      isLoading.value = true;
+
       final cred = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -84,9 +92,7 @@ class AuthController extends GetxController {
       final doc = await _db.collection('users').doc(user.uid).get();
 
       if (doc.exists) {
-        profile.value = AppUser.fromFirestore(
-          doc,
-        );
+        profile.value = AppUser.fromFirestore(doc);
 
         if (profile.value!.role == "admin") {
           Get.offAllNamed('/adminDashboard');
@@ -99,6 +105,9 @@ class AuthController extends GetxController {
       }
     } catch (e) {
       Get.snackbar("Sign In Error", e.toString());
+    } finally {
+      // ✅ Always reset loading state
+      isLoading.value = false;
     }
   }
 

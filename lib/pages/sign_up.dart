@@ -136,32 +136,50 @@ class _SignUpPageState extends State<SignUpPage> {
                 // Sign Up button
                 SizedBox(
                   width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1976D2), // blue button
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
+                  child: Obx(() {
+                    return ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1976D2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
                       ),
-                    ),
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        try {
-                          await _auth.signUp(
-                            _email.text.trim(),
-                            _pass.text.trim(),
-                            _name.text.trim(),
-                          );
-                        } catch (e) {
-                          Get.snackbar('Error', e.toString());
+                      onPressed: _auth.isLoading.value
+                          ? null
+                          : () async {
+                        if (_formKey.currentState!.validate()) {
+                          try {
+                            await _auth.signUp(
+                              _email.text.trim(),
+                              _pass.text.trim(),
+                              _name.text.trim(),
+                            );
+                          } catch (e) {
+                            Get.snackbar(
+                              "Sign Up Failed",
+                              e.toString().replaceAll("Exception:", "").trim(),
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.redAccent,
+                              colorText: Colors.white,
+                            );
+                          }
                         }
-                      }
-                    },
-                    child: const Text(
-                      "Sign Up",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                    ),
-                  ),
+                      },
+                      child: _auth.isLoading.value
+                          ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                          : const Text(
+                        "Sign Up",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    );
+                  }),
                 ),
 
                 const SizedBox(height: 16),
